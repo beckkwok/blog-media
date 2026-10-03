@@ -50,3 +50,14 @@ export async function getPostsByTag(tag: string, limit = 50) {
   })
   return docs
 }
+
+/** Fetches all experience entries. */
+export async function getExperience() {
+  const payload = await getPayloadClient()
+  const { docs } = await payload.find({
+    collection: 'experience',
+    sort: 'order',
+    depth: 0,
+  })
+  return docs
+}
