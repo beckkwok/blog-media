@@ -84,6 +84,8 @@ export interface Config {
     'eval-cases': EvalCase;
     'eval-runs': EvalRun;
     'eval-results': EvalResult;
+    experience: Experience;
+    projects: Project;
     'payload-mcp-api-keys': PayloadMcpApiKey;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
@@ -109,6 +111,8 @@ export interface Config {
     'eval-cases': EvalCasesSelect<false> | EvalCasesSelect<true>;
     'eval-runs': EvalRunsSelect<false> | EvalRunsSelect<true>;
     'eval-results': EvalResultsSelect<false> | EvalResultsSelect<true>;
+    experience: ExperienceSelect<false> | ExperienceSelect<true>;
+    projects: ProjectsSelect<false> | ProjectsSelect<true>;
     'payload-mcp-api-keys': PayloadMcpApiKeysSelect<false> | PayloadMcpApiKeysSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
@@ -674,6 +678,70 @@ export interface EvalResult {
   createdAt: string;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "experience".
+ */
+export interface Experience {
+  id: number;
+  /**
+   * Position title, e.g. Senior AI Engineer
+   */
+  title: string;
+  organization: string;
+  location?: string | null;
+  startDate: string;
+  endDate?: string | null;
+  current?: boolean | null;
+  summary?: string | null;
+  highlights?:
+    | {
+        highlight?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Sort order (highest first).
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects".
+ */
+export interface Project {
+  id: number;
+  title: string;
+  /**
+   * URL path, e.g. ai-tutor
+   */
+  slug: string;
+  summary: string;
+  stack?:
+    | {
+        tech?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Live project URL.
+   */
+  url?: string | null;
+  /**
+   * Source code URL.
+   */
+  repoUrl?: string | null;
+  coverImage?: (number | null) | Media;
+  featured?: boolean | null;
+  /**
+   * Sort order (highest first).
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * API keys control which collections, resources, tools, and prompts MCP clients can access
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -953,6 +1021,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'eval-results';
         value: number | EvalResult;
+      } | null)
+    | ({
+        relationTo: 'experience';
+        value: number | Experience;
+      } | null)
+    | ({
+        relationTo: 'projects';
+        value: number | Project;
       } | null)
     | ({
         relationTo: 'payload-mcp-api-keys';
@@ -1282,6 +1358,50 @@ export interface EvalResultsSelect<T extends boolean = true> {
   pass?: T;
   score?: T;
   reasons?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "experience_select".
+ */
+export interface ExperienceSelect<T extends boolean = true> {
+  title?: T;
+  organization?: T;
+  location?: T;
+  startDate?: T;
+  endDate?: T;
+  current?: T;
+  summary?: T;
+  highlights?:
+    | T
+    | {
+        highlight?: T;
+        id?: T;
+      };
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects_select".
+ */
+export interface ProjectsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  summary?: T;
+  stack?:
+    | T
+    | {
+        tech?: T;
+        id?: T;
+      };
+  url?: T;
+  repoUrl?: T;
+  coverImage?: T;
+  featured?: T;
+  order?: T;
   updatedAt?: T;
   createdAt?: T;
 }

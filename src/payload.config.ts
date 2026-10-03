@@ -23,6 +23,11 @@ import { Knowledge } from './collections/Knowledge'
 import { KnowledgeChunk } from './collections/KnowledgeChunk'
 import { ChatSession } from './collections/ChatSession'
 import { ChatMessage } from './collections/ChatMessage'
+// App-layer collections (blog-media): composed alongside the framework.
+// Framework-owned entries above are untouched; only this import block + the
+// `collections` array below are app extension points.
+import { Experience } from './collections/Experience'
+import { Projects } from './collections/Projects'
 import { pgVectorSchemaHook } from './collections/helpers/pgvector'
 import { ensureSearchTsvColumn } from './collections/helpers/searchTsv'
 import { runAgentTask } from './jobs/runAgent'
@@ -45,7 +50,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, BlogPosts, Knowledge, KnowledgeChunk, ChatSession, ChatMessage, Roles, Providers, Agents, AgentRuns, AgentMemory, Guardrails, EvalCase, EvalRun, EvalResult],
+  collections: [Users, Media, BlogPosts, Knowledge, KnowledgeChunk, ChatSession, ChatMessage, Roles, Providers, Agents, AgentRuns, AgentMemory, Guardrails, EvalCase, EvalRun, EvalResult, Experience, Projects],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
