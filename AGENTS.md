@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Guidance for AI coding agents working in this repository. Read this first. It defines what this project is, the non-negotiable architecture rules, and the conventions to follow when writing code.
+> **This is the `blog-media` app layer.** Base framework: https://github.com/beckkwok/agent_enabled_cms — the generic AACMS architecture/stack, layered rules, and framework-owned schema instructions below come from the framework and still apply **verbatim**. This header + the `blog-media specifics` section at the bottom add only what differs.
 
 ## Project purpose
 
@@ -155,3 +155,16 @@ Two shapes to support:
   - `docs/large-document-ingestion.md` — Design B reference: ingestion pipeline for large corporate documents (app-layer).
   - `docs/building-applications.md` — contract for app developers extending the framework.
   - `docs/v1-open-items.md` — design-stage decisions/open questions for building the first version.
+
+---
+
+## blog-media specifics (app layer)
+
+- **What this app is.** Beck's personal blog + portfolio + AI-education media site, built *on* the framework. Goal: public site (pages about me, my experience, my work) + 3 agents: (1) **manager/chatbot** (public streaming, answers "about Beck" like a manager), (2) **Instagram researcher** (single-shot, sweeps AI-education trends weekly, writes `IdeaDraft`), (3) **writer** (single-shot, turns an approved `IdeaDraft` into a blog draft + IG caption draft). Phase plan: `issues/00-overview.md`.
+- **"Add, don't edit" framework contract.** Put everything app-side in clearly-marked places so future framework upgrades apply cleanly: new collections in `src/collections/` (import + extend `collections` array in `src/payload.config.ts`), new skills `src/agents/skills/`, new jobs `src/jobs/`. Never edit files under the framework-owned collections listed in `docs/building-applications.md` (Users/Roles/Providers/Agents/…).
+- **Working code snippets live in issues/** and converge to `issues/00-overview.md` when a phase closes.
+- **Permissions.** Extend `PERMISSIONS` in-app (don't edit `src/collections/helpers/access.ts`): `content.write`, `research.write`, `social.write` are the app's own keys; admin still always passes. Keep the framework-owned `Roles.permissions` select untouched.
+- **Singularization gotcha.** `Projects` slug → generated `Project` type (not `Projects`); same for `Experience`. All collection references use the slug (`'projects'`, `'experience'`).
+- **Scripts and environment.** ES-module import hoisting evaluates `payload.config.ts` (which reads `PAYLOAD_SECRET`) *before* `scripts/seed.ts`'s own `import { config as loadEnv } from 'dotenv'` runs. Any script importing Payload config must load env **first** via `import 'dotenv/config'` (a side-effect import at the top) or `-r dotenv/config`. Do not paste env vars into the config.
+- **Language/locale.** Default English; AI-education posts may include Chinese — mixed scripts OK for content, not for code.
+- **Naming.** App collections sit under `admin.group: 'Portfolio'` for blog-media's portfolio data (Experience, Projects); later agents' own data (IdeaDrafts, SocialPosts) go under `AI Content`.

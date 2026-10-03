@@ -86,6 +86,8 @@ export interface Config {
     'eval-results': EvalResult;
     experience: Experience;
     projects: Project;
+    ideadrafts: Ideadraft;
+    socialposts: Socialpost;
     'payload-mcp-api-keys': PayloadMcpApiKey;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
@@ -113,6 +115,8 @@ export interface Config {
     'eval-results': EvalResultsSelect<false> | EvalResultsSelect<true>;
     experience: ExperienceSelect<false> | ExperienceSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    ideadrafts: IdeadraftsSelect<false> | IdeadraftsSelect<true>;
+    socialposts: SocialpostsSelect<false> | SocialpostsSelect<true>;
     'payload-mcp-api-keys': PayloadMcpApiKeysSelect<false> | PayloadMcpApiKeysSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
@@ -742,6 +746,54 @@ export interface Project {
   createdAt: string;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ideadrafts".
+ */
+export interface Ideadraft {
+  id: number;
+  topic: string;
+  summary?: string | null;
+  sources?:
+    | {
+        url?: string | null;
+        title?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  angle?: string | null;
+  status?: ('proposed' | 'approved' | 'rejected') | null;
+  /**
+   * Agent name or id that produced this draft.
+   */
+  originAgent?: string | null;
+  createdBy?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "socialposts".
+ */
+export interface Socialpost {
+  id: number;
+  idea?: (number | null) | Ideadraft;
+  blogPost?: (number | null) | BlogPost;
+  caption?: string | null;
+  hashtags?: string | null;
+  /**
+   * Prompt for an accompanying image (optional).
+   */
+  imagePrompt?: string | null;
+  status?: ('draft' | 'approved' | 'published') | null;
+  /**
+   * Instagram media container id (filled after publishInstagram job).
+   */
+  igMediaId?: string | null;
+  createdBy?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * API keys control which collections, resources, tools, and prompts MCP clients can access
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1029,6 +1081,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'projects';
         value: number | Project;
+      } | null)
+    | ({
+        relationTo: 'ideadrafts';
+        value: number | Ideadraft;
+      } | null)
+    | ({
+        relationTo: 'socialposts';
+        value: number | Socialpost;
       } | null)
     | ({
         relationTo: 'payload-mcp-api-keys';
@@ -1402,6 +1462,43 @@ export interface ProjectsSelect<T extends boolean = true> {
   coverImage?: T;
   featured?: T;
   order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ideadrafts_select".
+ */
+export interface IdeadraftsSelect<T extends boolean = true> {
+  topic?: T;
+  summary?: T;
+  sources?:
+    | T
+    | {
+        url?: T;
+        title?: T;
+        id?: T;
+      };
+  angle?: T;
+  status?: T;
+  originAgent?: T;
+  createdBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "socialposts_select".
+ */
+export interface SocialpostsSelect<T extends boolean = true> {
+  idea?: T;
+  blogPost?: T;
+  caption?: T;
+  hashtags?: T;
+  imagePrompt?: T;
+  status?: T;
+  igMediaId?: T;
+  createdBy?: T;
   updatedAt?: T;
   createdAt?: T;
 }

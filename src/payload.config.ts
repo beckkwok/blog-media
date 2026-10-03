@@ -28,6 +28,8 @@ import { ChatMessage } from './collections/ChatMessage'
 // `collections` array below are app extension points.
 import { Experience } from './collections/Experience'
 import { Projects } from './collections/Projects'
+import { IdeaDrafts } from './collections/IdeaDrafts'
+import { SocialPosts } from './collections/SocialPosts'
 import { pgVectorSchemaHook } from './collections/helpers/pgvector'
 import { ensureSearchTsvColumn } from './collections/helpers/searchTsv'
 import { runAgentTask } from './jobs/runAgent'
@@ -50,7 +52,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, BlogPosts, Knowledge, KnowledgeChunk, ChatSession, ChatMessage, Roles, Providers, Agents, AgentRuns, AgentMemory, Guardrails, EvalCase, EvalRun, EvalResult, Experience, Projects],
+  collections: [Users, Media, BlogPosts, Knowledge, KnowledgeChunk, ChatSession, ChatMessage, Roles, Providers, Agents, AgentRuns, AgentMemory, Guardrails, EvalCase, EvalRun, EvalResult, Experience, Projects, IdeaDrafts, SocialPosts],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
