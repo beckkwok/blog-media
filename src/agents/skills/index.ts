@@ -2,6 +2,7 @@ import type { Skill } from './types'
 
 import { countContent } from './countContent'
 import { getContent } from './getContent'
+import { getPage } from './getPage'
 import { listContent } from './listContent'
 import { searchKnowledge } from './searchKnowledge'
 import { saveMemory } from './saveMemory'
@@ -15,6 +16,7 @@ export const SKILLS: Record<string, Skill> = {
   [searchKnowledge.name]: searchKnowledge,
   [listContent.name]: listContent,
   [getContent.name]: getContent,
+  [getPage.name]: getPage,
   [countContent.name]: countContent,
   [saveMemory.name]: saveMemory,
 }

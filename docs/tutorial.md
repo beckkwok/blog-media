@@ -84,6 +84,7 @@ The framework already defines a set of collections. **You are free to add, edit,
 | `EvalCase` / `EvalRun` / `EvalResult` | Evaluation: known questions + expected answers, scored. |
 | `Media` | Uploads (images, files). |
 | `BlogPosts` | Sample content collection (the "blog"), kept as a reference. |
+| `Pages` | Static pages (about, contact, …) addressed by `slug`, rendered at `/{slug}`. |
 
 **Your application** then adds its *own* collections alongside these — for our restaurant, that's `Menu` (and later `Order`). Those are yours to define however you like.
 
@@ -96,6 +97,7 @@ To give you a feel for what an agent can do out of the box, the framework ships 
 | `searchKnowledge` | Search the Knowledge base (RAG) for relevant excerpts. |
 | `listContent` | List published blog posts. |
 | `getContent` | Get one published post by slug. |
+| `getPage` | Get one published static page by slug. |
 | `countContent` | Count published posts. |
 | `saveMemory` | Save a fact/preference to the agent's own long-term memory. |
 

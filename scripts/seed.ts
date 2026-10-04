@@ -31,6 +31,7 @@ const MCP_KEY_COLLECTION = 'payload-mcp-api-keys'
 // collection slug group holding find/create/update/delete checkboxes.
 const ADMIN_KEY_CAPABILITIES = {
   blogPosts: { find: true },
+  pages: { find: true },
   media: { find: true },
   knowledge: { find: true },
   chatSessions: { find: true },
@@ -339,6 +340,37 @@ async function seedSampleContent(payload: Payload) {
     } else {
       await payload.update({ collection: 'blog-posts', id: exists.docs[0].id, data, overrideAccess: true })
       console.log('Updated blog post:', post.slug)
+    }
+  }
+
+  // --- Static pages ---
+  const pages = [
+    {
+      title: 'About',
+      slug: 'about',
+      excerpt: 'What AACMS is and what it is for.',
+      content: [
+        'AACMS (agent-enabled CMS) manages content, data, and agents together, with agents working on your behalf out of the box.',
+        'This page is served from the Pages collection: create or edit static pages in the admin and they render at /{slug} with no code change.',
+      ].join('\n\n'),
+      published: true,
+    },
+  ]
+
+  for (const page of pages) {
+    const exists = await payload.find({
+      collection: 'pages',
+      where: { slug: { equals: page.slug } },
+      overrideAccess: true,
+      depth: 0,
+    })
+    const data = { ...page, content: plainTextToLexical(page.content), _status: 'published' as const }
+    if (exists.totalDocs === 0) {
+      await payload.create({ collection: 'pages', data, overrideAccess: true })
+      console.log('Created page:', page.slug)
+    } else {
+      await payload.update({ collection: 'pages', id: exists.docs[0].id, data, overrideAccess: true })
+      console.log('Updated page:', page.slug)
     }
   }
 

@@ -36,6 +36,19 @@ export async function getPostBySlug(slug: string, options: { draft?: boolean } =
   return docs[0] || null
 }
 
+/** Fetches a single published static page by slug. Draft previews require admin cookies. */
+export async function getPublishedPage(slug: string, options: { draft?: boolean } = {}) {
+  const payload = await getPayloadClient()
+  const { docs } = await payload.find({
+    collection: 'pages',
+    where: { and: [{ slug: { equals: slug } }, ...(options.draft ? [] : [{ published: { equals: true } }])] },
+    depth: 1,
+    limit: 1,
+    ...(options.draft ? { draft: true } : {}),
+  })
+  return docs[0] || null
+}
+
 /** Fetches published posts with a given tag. */
 export async function getPostsByTag(tag: string, limit = 50) {
   const payload = await getPayloadClient()

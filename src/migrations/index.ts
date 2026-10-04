@@ -12,6 +12,7 @@ import * as migration_20260919_000000_agent_memory from './20260919_000000_agent
 import * as migration_20260919_010000_role_permissions from './20260919_010000_role_permissions';
 import * as migration_20260919_020000_evaluation from './20260919_020000_evaluation';
 import * as migration_20260919_030000_eval_gate from './20260919_030000_eval_gate';
+import * as migration_20261004_000000_pages from './20261004_000000_pages';
 
 export const migrations = [
   {
@@ -83,5 +84,10 @@ export const migrations = [
     up: migration_20260919_030000_eval_gate.up,
     down: migration_20260919_030000_eval_gate.down,
     name: '20260919_030000_eval_gate'
+  },
+  {
+    up: migration_20261004_000000_pages.up,
+    down: migration_20261004_000000_pages.down,
+    name: '20261004_000000_pages'
   },
 ];

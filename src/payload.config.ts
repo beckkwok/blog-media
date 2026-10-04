@@ -19,6 +19,7 @@ import { EvalRun } from './collections/EvalRun'
 import { EvalResult } from './collections/EvalResult'
 import { Media } from './collections/Media'
 import { BlogPosts } from './collections/BlogPosts'
+import { Pages } from './collections/Pages'
 import { Knowledge } from './collections/Knowledge'
 import { KnowledgeChunk } from './collections/KnowledgeChunk'
 import { ChatSession } from './collections/ChatSession'
@@ -52,7 +53,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, BlogPosts, Knowledge, KnowledgeChunk, ChatSession, ChatMessage, Roles, Providers, Agents, AgentRuns, AgentMemory, Guardrails, EvalCase, EvalRun, EvalResult, Experience, Projects, IdeaDrafts, SocialPosts],
+  collections: [Users, Media, BlogPosts, Pages, Knowledge, KnowledgeChunk, ChatSession, ChatMessage, Roles, Providers, Agents, AgentRuns, AgentMemory, Guardrails, EvalCase, EvalRun, EvalResult, Experience, Projects, IdeaDrafts, SocialPosts],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -148,6 +149,7 @@ export default buildConfig({
     mcpPlugin({
       collections: {
         'blog-posts': { enabled: { find: true } },
+        pages: { enabled: { find: true } },
         media: { enabled: { find: true } },
         knowledge: { enabled: { find: true } },
         'chat-sessions': { enabled: { find: true } },

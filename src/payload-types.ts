@@ -71,6 +71,7 @@ export interface Config {
     users: User;
     media: Media;
     'blog-posts': BlogPost;
+    pages: Page;
     knowledge: Knowledge;
     'knowledge-chunks': KnowledgeChunk;
     'chat-sessions': ChatSession;
@@ -100,6 +101,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'blog-posts': BlogPostsSelect<false> | BlogPostsSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
     knowledge: KnowledgeSelect<false> | KnowledgeSelect<true>;
     'knowledge-chunks': KnowledgeChunksSelect<false> | KnowledgeChunksSelect<true>;
     'chat-sessions': ChatSessionsSelect<false> | ChatSessionsSelect<true>;
@@ -294,6 +296,40 @@ export interface BlogPost {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: number;
+  title: string;
+  /**
+   * URL path, e.g. about
+   */
+  slug: string;
+  excerpt?: string | null;
+  coverImage?: (number | null) | Media;
+  published?: boolean | null;
+  publishedDate?: string | null;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "knowledge".
  */
 export interface Knowledge {
@@ -393,7 +429,7 @@ export interface Agent {
   /**
    * CMS skills the agent may call during a run. Calls run as the agent principal, so access rules apply.
    */
-  tools?: ('searchKnowledge' | 'listContent' | 'getContent' | 'countContent' | 'saveMemory')[] | null;
+  tools?: ('searchKnowledge' | 'listContent' | 'getContent' | 'getPage' | 'countContent' | 'saveMemory')[] | null;
   /**
    * Who may call POST /api/agents/:id/run. Use "public" for customer-facing FAQ agents; "admin" for agents that touch sensitive data.
    */
@@ -819,6 +855,12 @@ export interface PayloadMcpApiKey {
      */
     find?: boolean | null;
   };
+  pages?: {
+    /**
+     * Allow clients to find pages.
+     */
+    find?: boolean | null;
+  };
   media?: {
     /**
      * Allow clients to find media.
@@ -878,6 +920,10 @@ export interface PayloadMcpApiKey {
      * Get a published blog post by its slug.
      */
     getContent?: boolean | null;
+    /**
+     * Get a published static page (about, contact, …) by its slug.
+     */
+    getPage?: boolean | null;
     /**
      * Count published blog posts (reporting example).
      */
@@ -1021,6 +1067,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'blog-posts';
         value: number | BlogPost;
+      } | null)
+    | ({
+        relationTo: 'pages';
+        value: number | Page;
       } | null)
     | ({
         relationTo: 'knowledge';
@@ -1207,6 +1257,22 @@ export interface BlogPostsSelect<T extends boolean = true> {
         tag?: T;
         id?: T;
       };
+  content?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  excerpt?: T;
+  coverImage?: T;
+  published?: T;
+  publishedDate?: T;
   content?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1515,6 +1581,11 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
     | {
         find?: T;
       };
+  pages?:
+    | T
+    | {
+        find?: T;
+      };
   media?:
     | T
     | {
@@ -1557,6 +1628,7 @@ export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
         searchKnowledge?: T;
         listContent?: T;
         getContent?: T;
+        getPage?: T;
         countContent?: T;
         saveMemory?: T;
       };

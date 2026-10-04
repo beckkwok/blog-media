@@ -7,7 +7,7 @@ import { buildAgentTools } from '@/agents/skills/langchain'
 describe('skill registry', () => {
   it('exposes the framework skills', () => {
     expect(SKILL_NAMES).toEqual(
-      expect.arrayContaining(['searchKnowledge', 'listContent', 'getContent', 'countContent']),
+      expect.arrayContaining(['searchKnowledge', 'listContent', 'getContent', 'getPage', 'countContent']),
     )
   })
 
@@ -28,6 +28,37 @@ describe('buildAgentTools', () => {
     const tools = buildAgentTools(['countContent'], { payload })
     const result = await tools[0].invoke({})
     expect(JSON.parse(result as string)).toEqual({ totalDocs: 7 })
+  })
+
+  it('getPage returns published pages by slug and passes access control', async () => {
+    const calls: unknown[] = []
+    const user = { id: 7, collection: 'users', type: 'Agent' }
+    const payload = {
+      find: async (args: unknown) => {
+        calls.push(args)
+        return { docs: [{ id: 1, slug: 'about', published: true }] }
+      },
+    } as never
+
+    const tools = buildAgentTools(['getPage'], { payload, user: user as never })
+    const result = await tools[0].invoke({ slug: 'about' })
+    expect(JSON.parse(result as string)).toEqual({
+      page: { id: 1, slug: 'about', published: true },
+    })
+
+    expect(calls).toHaveLength(1)
+    const args = calls[0] as { collection: string; where: unknown; overrideAccess: boolean; user: unknown }
+    expect(args.collection).toBe('pages')
+    expect(args.overrideAccess).toBe(false)
+    expect(args.user).toBe(user)
+    expect(JSON.stringify(args.where)).toContain('"published"')
+  })
+
+  it('getPage returns null for blank slugs and missing docs', async () => {
+    const payload = { find: async () => ({ docs: [] }) } as never
+    const tools = buildAgentTools(['getPage'], { payload })
+    expect(JSON.parse((await tools[0].invoke({ slug: '  ' })) as string)).toEqual({ page: null })
+    expect(JSON.parse((await tools[0].invoke({ slug: 'nope' })) as string)).toEqual({ page: null })
   })
 
   it('passes overrideAccess:false and the acting user to Payload (access control)', async () => {

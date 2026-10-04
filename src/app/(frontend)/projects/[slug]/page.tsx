@@ -1,51 +1,47 @@
+import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import React from 'react'
 
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { getPayloadClient } from '@/lib/site-data'
 
-export default async function ProjectsDetailPage({
-  params,
-}: {
-  params: { slug: string }
-}) {
-  const payload = await getPayloadClient()
-  const { doc } = await payload.findByID({
-    collection: 'projects',
-    id: params.slug,
-    // biome-ignore lint/suspicious/noExplicitAny: <reason>
-    depth: 0,
-  })
+export const dynamic = 'force-dynamic'
 
-  if (!doc) {
-    return <div className="p-4">Project not found</div>
-  }
+type ProjectProps = {
+  params: Promise<{ slug: string }>
+}
+
+export default async function ProjectsDetailPage({ params }: ProjectProps) {
+  const { slug } = await params
+  const payload = await getPayloadClient()
+  const { docs } = await payload.find({
+    collection: 'projects',
+    where: { slug: { equals: slug } },
+    depth: 1,
+    limit: 1,
+  })
+  const doc = docs[0]
+
+  if (!doc) notFound()
 
   return (
-    <div className="prose max-w-none mx-auto px-4 py-8">
+    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
       <Card>
         <CardHeader>
-          <CardTitle>
-            <Link href="/projects" className="no-underline">
-              {doc.title}
-            </Link>
-          </CardHeader>
-          {doc.summary && (
-            <CardDescription>
-              {doc.summary}
-            </CardDescription>
-          )}
+          <CardTitle className="text-3xl">{doc.title}</CardTitle>
+          {doc.summary && <CardDescription className="text-base">{doc.summary}</CardDescription>}
+        </CardHeader>
+        <CardContent>
           {doc.stack?.length > 0 && (
-            <CardFooter className="pt-2">
-              <span className="text-sm text-muted-foreground">
-                {doc.stack.map((s) => (
-                  <Badge key={s.tech} variant="subtle" className="text-xs">
-                    {s.tech}
-                  </Badge>
-                ))}
-              </span>
-            </CardFooter>
+            <div className="flex flex-wrap gap-2">
+              {doc.stack.map((s) => (
+                <Badge key={s.tech} variant="secondary" className="text-xs">
+                  {s.tech}
+                </Badge>
+              ))}
+            </div>
           )}
           {doc.url && (
             <div className="mt-4">
@@ -55,7 +51,7 @@ export default async function ProjectsDetailPage({
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:underline"
               >
-                View live demo <ArrowRight className="inline" />
+                View live demo <ArrowRight className="inline size-4" />
               </a>
             </div>
           )}
@@ -67,12 +63,17 @@ export default async function ProjectsDetailPage({
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:underline"
               >
-                View source code <ArrowRight className="inline" />
+                View source code <ArrowRight className="inline size-4" />
               </a>
             </div>
           )}
-        </Card>
-      </div>
+        </CardContent>
+        <CardFooter>
+          <Link href="/" className="text-sm text-muted-foreground hover:underline">
+            ← Back home
+          </Link>
+        </CardFooter>
+      </Card>
     </div>
   )
 }

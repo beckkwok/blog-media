@@ -39,6 +39,7 @@ In addition to the collection/global CRUD tools, AACMS registers framework **ski
 | `searchKnowledge` | `query: string`, `limit?: number` | `{ results: [{ content, similarity }] }` |
 | `listContent` | `limit?: number` | `{ posts: [{ title, slug, excerpt, publishedDate }] }` |
 | `getContent` | `slug: string` | `{ post: {…} \| null }` |
+| `getPage` | `slug: string` | `{ page: {…} \| null }` |
 | `countContent` | *(none)* | `{ totalDocs: number }` |
 
 Each tool handler receives `(args, req)` and runs the skill with `{ payload: req.payload, user: req.user }` using `overrideAccess: false`, so the API-key owner's access rules gate the call. Per-key allow/disallow lives in the **MCP → API Keys** collection (`payload_mcp_tool_*` fields).

@@ -56,7 +56,7 @@ A `Skill` may declare who is allowed to call it; `authorizeSkill` (`src/agents/s
 
 On denial the skill returns `{ error: '…' }` and the handler is **not** called. This is separate from data access — the skill still runs with `overrideAccess: false`, so collection rules apply too.
 
-All four framework skills are access-limited: `listContent`/`getContent`/`countContent` go through Payload directly, and `searchKnowledge` scopes retrieval to the Knowledge ids the caller may read (`docs/retrieval.md`, design A+B).
+All six framework skills are access-limited: `listContent`/`getContent`/`getPage`/`countContent` go through Payload directly, and `searchKnowledge` scopes retrieval to the Knowledge ids the caller may read (`docs/retrieval.md`, design A+B).
 
 > Collection `access` is now role-aware via `requirePermission` (`src/collections/helpers/access.ts`) — see `docs/v1-open-items.md` #11. Admins always bypass; otherwise the acting principal's `Role` must grant the matching permission (`Roles.permissions`).
 
@@ -67,10 +67,11 @@ All four framework skills are access-limited: `listContent`/`getContent`/`countC
 | `searchKnowledge` | `query: string`, `limit?: number` (default 5, max 20) | `{ results: [{ content, similarity }] }` — hybrid RRF excerpts from the Knowledge base |
 | `listContent` | `limit?: number` (default 10, max 50) | `{ posts: [{ title, slug, excerpt, publishedDate }] }` — published posts, newest first |
 | `getContent` | `slug: string` | `{ post: { … } \| null }` — a single published post |
+| `getPage` | `slug: string` | `{ page: { … } \| null }` — a single published static page |
 | `countContent` | *(none)* | `{ totalDocs: number }` — count of published posts |
 | `saveMemory` | `content: string`, `kind?: 'fact'\|'preference'\|'summary'`, `agent?: number` (admin) | `{ id, agent, kind, content }` — saves to the agent's own long-term memory |
 
-**Exposed over MCP:** all five are registered as MCP custom tools (`mcp.tools`) and appear in `tools/list` for any MCP client with a valid API key. Each key can enable/disable them individually under **MCP → API Keys** (the `payload_mcp_tool_*` toggles). See `docs/mcp-connectivity.md`.
+**Exposed over MCP:** all six are registered as MCP custom tools (`mcp.tools`) and appear in `tools/list` for any MCP client with a valid API key. Each key can enable/disable them individually under **MCP → API Keys** (the `payload_mcp_tool_*` toggles). See `docs/mcp-connectivity.md`.
 
 > `searchKnowledge` is access-scoped: retrieval resolves the caller's allowed Knowledge ids via the access layer before the SQL search (`docs/retrieval.md`).
 >

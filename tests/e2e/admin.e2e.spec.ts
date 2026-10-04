@@ -32,6 +32,13 @@ test.describe('Admin Panel', () => {
     await expect(listViewArtifact).toBeVisible()
   })
 
+  test('can navigate to pages list view', async () => {
+    await page.goto('http://localhost:3000/admin/collections/pages')
+    await expect(page).toHaveURL('http://localhost:3000/admin/collections/pages')
+    const listViewArtifact = page.locator('h1', { hasText: 'Pages' }).first()
+    await expect(listViewArtifact).toBeVisible()
+  })
+
   test('can navigate to edit view', async () => {
     await page.goto('http://localhost:3000/admin/collections/users/create')
     await expect(page).toHaveURL(/\/admin\/collections\/users\/[a-zA-Z0-9-_]+/)
